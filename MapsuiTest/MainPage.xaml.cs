@@ -10,13 +10,10 @@ using Mapsui.Widgets.ScaleBar;
 using Mapsui.Geometries;
 using Mapsui.UI.Forms.Extensions;
 using Xamarin.Forms;
-using BruTile.Cache;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using System.IO;
-using BruTile;
 using BruTile.Web;
-using BruTile.Predefined;
 
 namespace MapsuiTest
 {
@@ -27,6 +24,8 @@ namespace MapsuiTest
     {
         private readonly HttpClient httpClient;
         private readonly KartverketTileSource kartverketTileSource = KartverketTileSource.NorgeskartBakgrunn;
+        private readonly ReadOnlyFileCache fileCache;
+        private readonly HttpTileSource tileSource;
 
         public MainPage()
         {
@@ -48,11 +47,12 @@ namespace MapsuiTest
             };
 
 
-            HttpTileSource tileSource = KartverketSources.Create(
+            tileSource = KartverketSources.Create(
                 kartverketTileSource,
                 FetchFactory.CreateRetryFetcher(httpClient));
 
-            tileSource.PersistentCache = new ReadOnlyFileCache(GetCacheFolder(tileSource.Name), "png");
+            fileCache = new ReadOnlyFileCache(GetCacheFolder(tileSource.Name), "png"); ;
+            tileSource.PersistentCache = fileCache;
 
             var tileLayer = new TileLayer(tileSource)
             {
@@ -89,16 +89,10 @@ namespace MapsuiTest
         {
             Device.BeginInvokeOnMainThread(() => downloadMapButton.IsEnabled = false);
 
-            HttpTileSource tileSource = KartverketSources.Create(
-                kartverketTileSource,
-                FetchFactory.CreateRetryFetcher(httpClient));
-
-            var fileCache = new FileCache(GetCacheFolder(tileSource.Name), "png");
-            tileSource.PersistentCache = fileCache;
-
             var mapExtent = mapView.Viewport.Extent.ToExtent();
             var fetchStrategy = new CustomFetchStrategy();
-            var tileInfos = fetchStrategy.Get(tileSource.Schema, mapExtent, 15);
+            var tileInfos = fetchStrategy.Get(tileSource.Schema, mapExtent, 18);
+            fileCache.CacheToDisk = true;
 
             using (var loading = UserDialogs.Instance.Loading())
             {
@@ -106,7 +100,7 @@ namespace MapsuiTest
                 foreach (var tileInfo in tileInfos)
                 {
                     tileCounter++;
-                    double progress = Math.Round(tileCounter / (float)tileInfos.Count * 100.0f, 2);
+                    int progress = Convert.ToInt32(tileCounter / (float)tileInfos.Count * 100.0);
 
                     var tileSize = 0;
                     if (!fileCache.Exists(tileInfo.Index))
@@ -128,6 +122,7 @@ namespace MapsuiTest
                 }
             }
 
+            fileCache.CacheToDisk = false;
             Device.BeginInvokeOnMainThread(() => downloadMapButton.IsEnabled = true);
         }
 

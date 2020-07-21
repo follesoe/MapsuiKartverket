@@ -8,14 +8,22 @@ namespace MapsuiTest
         private readonly FileCache fileCache;
         private readonly MemoryCache<byte[]> memoryCache;
 
+        public bool CacheToDisk { get; set; }
+
         public ReadOnlyFileCache(string directory, string format)
         {
             fileCache = new FileCache(directory, format);
             memoryCache = new MemoryCache<byte[]>();
         }
 
-        public void Add(TileIndex index, byte[] image) =>
+        public void Add(TileIndex index, byte[] image)
+        {
             memoryCache.Add(index, image);
+            if (CacheToDisk)
+            {
+                fileCache.Add(index, image);
+            }
+        }
 
         public byte[] Find(TileIndex index)
         {
@@ -25,5 +33,7 @@ namespace MapsuiTest
 
         public void Remove(TileIndex index) =>
             memoryCache.Remove(index);
+
+        public bool Exists(TileIndex index) => fileCache.Exists(index);
     }
 }
