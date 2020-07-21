@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>MapsuiTest</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MapsuiTest.Lib\MapsuiTest.Lib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="7.2.1" />
+    <PackageReference Include="BruTile" Version="3.0.0" />
+    <PackageReference Include="BruTile.Desktop" Version="3.0.0" />
+    <PackageReference Include="Mapsui" Version="3.0.0-alpha.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="tilecache" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
