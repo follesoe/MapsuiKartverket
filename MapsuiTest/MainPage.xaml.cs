@@ -14,6 +14,9 @@ using BruTile.Cache;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using System.IO;
+using BruTile;
+using BruTile.Web;
+using BruTile.Predefined;
 
 namespace MapsuiTest
 {
@@ -23,6 +26,7 @@ namespace MapsuiTest
     public partial class MainPage : ContentPage
     {
         private readonly HttpClient httpClient;
+        private readonly KartverketTileSource kartverketTileSource = KartverketTileSource.NorgeskartBakgrunn;
 
         public MainPage()
         {
@@ -43,12 +47,12 @@ namespace MapsuiTest
                 Transformation = new MinimalTransformation()
             };
 
-            var readonlyCache = new ReadOnlyFileCache(
-                GetCacheFolder(KartverketTileSource.SjøkartRaster), "png");
-            var tileSource = KartverketSources.Create(
-                KartverketTileSource.SjøkartRaster,
-                FetchFactory.CreateRetryFetcher(httpClient),
-                readonlyCache);
+
+            HttpTileSource tileSource = KartverketSources.Create(
+                kartverketTileSource,
+                FetchFactory.CreateRetryFetcher(httpClient));
+
+            tileSource.PersistentCache = new ReadOnlyFileCache(GetCacheFolder(tileSource.Name), "png");
 
             var tileLayer = new TileLayer(tileSource)
             {
@@ -85,14 +89,15 @@ namespace MapsuiTest
         {
             Device.BeginInvokeOnMainThread(() => downloadMapButton.IsEnabled = false);
 
-            var fileCache = new FileCache(GetCacheFolder(KartverketTileSource.SjøkartRaster), "png");
-            var tileSource = KartverketSources.Create(
-                KartverketTileSource.SjøkartRaster,
-                FetchFactory.CreateRetryFetcher(httpClient),
-                fileCache);
+            HttpTileSource tileSource = KartverketSources.Create(
+                kartverketTileSource,
+                FetchFactory.CreateRetryFetcher(httpClient));
+
+            var fileCache = new FileCache(GetCacheFolder(tileSource.Name), "png");
+            tileSource.PersistentCache = fileCache;
 
             var mapExtent = mapView.Viewport.Extent.ToExtent();
-            var fetchStrategy = new DataFetchStrategy();
+            var fetchStrategy = new CustomFetchStrategy();
             var tileInfos = fetchStrategy.Get(tileSource.Schema, mapExtent, 15);
 
             using (var loading = UserDialogs.Instance.Loading())
@@ -134,9 +139,9 @@ namespace MapsuiTest
             }
         }
 
-        private string GetCacheFolder(KartverketTileSource source)
+        private string GetCacheFolder(string sourceName)
         {
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "tilecache", source.ToString());
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "tilecache", sourceName);
             Console.WriteLine($"Path: {path}");
             return path;
         }

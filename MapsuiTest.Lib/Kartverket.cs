@@ -14,6 +14,7 @@ namespace MapsuiTest
         Terrengmodell,
         EnkeltKart,
         SjøkartRaster,
+        NorgeskartBakgrunn
     }
 
     public static class KartverketSources
@@ -42,6 +43,7 @@ namespace MapsuiTest
                 KartverketTileSource.Terrengmodell => "terreng_norgeskart",
                 KartverketTileSource.EnkeltKart => "egk",
                 KartverketTileSource.SjøkartRaster => "sjokartraster",
+                KartverketTileSource.NorgeskartBakgrunn => "norgeskart_bakgrunn",
                 _ => throw new ArgumentException($"Unknown source: {source}", nameof(source)),
             };
     }
