@@ -24,6 +24,7 @@
     <PackageReference Include="BruTile.Desktop.DbCache" Version="3.0.0" />
     <PackageReference Include="BruTile" Version="3.0.0" />
     <PackageReference Include="Acr.UserDialogs" Version="7.1.0.446" />
+    <PackageReference Include="Plugin.SegmentedControl.Netstandard" Version="5.2.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MapsuiTest.Lib\MapsuiTest.Lib.csproj" />

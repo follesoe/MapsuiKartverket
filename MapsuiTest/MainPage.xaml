@@ -5,8 +5,13 @@
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms"
+    xmlns:segment="clr-namespace:Plugin.Segmented.Control;assembly=Plugin.Segmented"
     mc:Ignorable="d"
     x:Class="MapsuiTest.MainPage">
+    <ContentPage.Resources>
+        <Color x:Key="DarkBlue">#00385E</Color>
+        <Color x:Key="AquaBlue">#00D8D2</Color>
+    </ContentPage.Resources>
     <AbsoluteLayout>
         <mapsui:MapView
             x:Name="mapView"
@@ -14,9 +19,27 @@
             AbsoluteLayout.LayoutFlags="All"
             BackgroundColor="Gray" />
 
+        <segment:SegmentedControl
+            x:Name="layerSegmentControl"
+            SelectedSegment="0"
+            FontSize="Small"
+            TextColor="White"
+            SelectedTextColor="White"
+            TintColor="{DynamicResource AquaBlue}"
+            BackgroundColor="{DynamicResource DarkBlue}"
+            AbsoluteLayout.LayoutBounds="0.5, 0.05, 0.9, 40"
+            AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional">
+            <segment:SegmentedControl.Children>
+                <segment:SegmentedControlOption Text="Norgeskart" />
+                <segment:SegmentedControlOption Text="Sjøkart" />
+                <segment:SegmentedControlOption Text="Open Street Map" />
+            </segment:SegmentedControl.Children>
+        </segment:SegmentedControl>
+
         <Button
             x:Name="downloadMapButton"
             Text="Download Offline Map"
+            TextColor="{DynamicResource AquaBlue}"
             AbsoluteLayout.LayoutBounds="0.5, 0.95, 180, 30"
             AbsoluteLayout.LayoutFlags="PositionProportional" />
     </AbsoluteLayout>

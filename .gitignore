@@ -408,3 +408,4 @@ ASALocalRun/
 .vscode
 
 # Local folders
+MapsuiTest.Android/Resources/Resource.designer.cs

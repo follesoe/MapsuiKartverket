@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using BruTile;
 using BruTile.Web;
 using BruTile.Predefined;
 using BruTile.Cache;
+using System.Linq;
 
 namespace MapsuiTest
 {
@@ -26,7 +28,7 @@ namespace MapsuiTest
             Func<Uri, byte[]> tileFetcher = null,
             IPersistentCache<byte[]> persistentCache = null) =>
             new HttpTileSource(
-                new GlobalSphericalMercator(),
+                new GlobalSphericalMercator(zoomLevels: TileSourceToZoomLevels(source)),
                 "https://{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=" + TileSourceToLayer(source) + "&zoom={z}&x={x}&y={y}",
                 serverNodes: new[] { "opencache", "opencache2", "opencache3" },
                 persistentCache: persistentCache,
@@ -45,6 +47,13 @@ namespace MapsuiTest
                 KartverketTileSource.SjøkartRaster => "sjokartraster",
                 KartverketTileSource.NorgeskartBakgrunn => "norgeskart_bakgrunn",
                 _ => throw new ArgumentException($"Unknown source: {source}", nameof(source)),
+            };
+
+        private static IEnumerable<int> TileSourceToZoomLevels(KartverketTileSource source) =>
+            source switch
+            {
+                KartverketTileSource.NorgeskartBakgrunn => Enumerable.Range(1, 18),
+                _ => Enumerable.Range(1, 15)
             };
     }
 }
